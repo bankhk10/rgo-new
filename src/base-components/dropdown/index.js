@@ -43,23 +43,36 @@ const init = (el, props) => {
   }
 };
 
-// Dropdown wrapper
 const dropdownRefContext = createContext();
-function Dropdown(props) {
+
+function Dropdown({
+  show = false,
+  placement = "bottom-end",
+  onShow = () => {},
+  onShown = () => {},
+  onHide = () => {},
+  onHidden = () => {},
+  className = "",
+  children,
+}) {
   const dropdownRef = createRef();
   const dropdownRefTemp = createRef();
   const location = useLocation();
 
-  // On prop change
   useEffect(() => {
     dropdownRefTemp.current = dropdownRef.current;
-    init(dropdownRef.current, props);
+    init(dropdownRef.current, {
+      show,
+      onShow,
+      onShown,
+      onHide,
+      onHidden,
+    });
 
-    // Hide dropdown when component unmount
     return () => {
       tailwind.Dropdown.getOrCreateInstance(dropdownRefTemp.current).hide();
     };
-  }, [props.show, location]);
+  }, [show, location]);
 
   return createElement(
     dropdownRefContext.Provider,
@@ -69,17 +82,17 @@ function Dropdown(props) {
     createElement(
       "div",
       {
-        className: `dropdown ${props.className}`,
+        className: `dropdown ${className}`,
         ref: dropdownRef,
-        "data-tw-placement": props.placement,
+        "data-tw-placement": placement,
       },
-      typeof props.children === "function"
-        ? props.children({
+      typeof children === "function"
+        ? children({
             dismiss: () => {
               tailwind.Dropdown.getOrCreateInstance(dropdownRef.current).hide();
             },
           })
-        : props.children
+        : children
     )
   );
 }
@@ -91,42 +104,35 @@ Dropdown.propTypes = {
   onShown: PropTypes.func,
   onHide: PropTypes.func,
   onHidden: PropTypes.func,
+  className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-Dropdown.defaultProps = {
-  show: false,
-  placement: "bottom-end",
-  onShow: () => {},
-  onShown: () => {},
-  onHide: () => {},
-  onHidden: () => {},
-};
-
-// Dropdown toggle
-function DropdownToggle(props) {
-  const { tag, href, ...computedProps } = props;
+function DropdownToggle({
+  tag = "button",
+  className = "",
+  children,
+  ...computedProps
+}) {
   return createElement(
-    props.tag,
+    tag,
     {
       ...computedProps,
-      className: `dropdown-toggle cursor-pointer ${props.className}`,
+      className: `dropdown-toggle cursor-pointer ${className}`,
       "aria-expanded": false,
       "data-tw-toggle": "dropdown",
     },
-    props.children
+    children
   );
 }
 
 DropdownToggle.propTypes = {
   tag: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-DropdownToggle.defaultProps = {
-  tag: "button",
-};
-
-// Dropdown menu
-function DropdownMenu(props) {
+function DropdownMenu({ className = "", children }) {
   const dropdownRef = useContext(dropdownRefContext);
   const dropdownMenuRef = createRef();
 
@@ -141,49 +147,54 @@ function DropdownMenu(props) {
       createElement(
         "div",
         {
-          className: `dropdown-menu ${props.className}`,
+          className: `dropdown-menu ${className}`,
           ref: dropdownMenuRef,
         },
-        props.children
+        children
       )
     ),
     dom("body")[0]
   );
 }
 
-// Dropdown content
-function DropdownContent(props) {
+DropdownMenu.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.any,
+};
+
+function DropdownContent({ tag = "ul", className = "", children }) {
   return createElement(
-    props.tag,
+    tag,
     {
-      className: `dropdown-content ${props.className}`,
+      className: `dropdown-content ${className}`,
     },
-    props.children
+    children
   );
 }
 
 DropdownContent.propTypes = {
   tag: PropTypes.string,
+  className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-DropdownContent.defaultProps = {
-  tag: "ul",
-};
-
-// Dropdown item
-function DropdownItem(props) {
-  const { tag, className, ...computedProps } = props;
+function DropdownItem({
+  tag = "a",
+  className = "",
+  children,
+  ...computedProps
+}) {
   return createElement(
     "li",
     {
       ...computedProps,
     },
     createElement(
-      props.tag,
+      tag,
       {
-        className: `dropdown-item cursor-pointer ${props.className}`,
+        className: `dropdown-item cursor-pointer ${className}`,
       },
-      props.children
+      children
     )
   );
 }
@@ -191,27 +202,26 @@ function DropdownItem(props) {
 DropdownItem.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-DropdownItem.defaultProps = {
-  tag: "a",
-  className: "",
-};
-
-// Dropdown header
-function DropdownHeader(props) {
-  const { tag, className, ...computedProps } = props;
+function DropdownHeader({
+  tag = "h6",
+  className = "",
+  children,
+  ...computedProps
+}) {
   return createElement(
     "li",
     {
       ...computedProps,
     },
     createElement(
-      props.tag,
+      tag,
       {
-        className: `dropdown-header ${props.className}`,
+        className: `dropdown-header ${className}`,
       },
-      props.children
+      children
     )
   );
 }
@@ -219,27 +229,26 @@ function DropdownHeader(props) {
 DropdownHeader.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-DropdownHeader.defaultProps = {
-  tag: "h6",
-  className: "",
-};
-
-// Dropdown footer
-function DropdownFooter(props) {
-  const { tag, className, ...computedProps } = props;
+function DropdownFooter({
+  tag = "div",
+  className = "",
+  children,
+  ...computedProps
+}) {
   return createElement(
     "li",
     {
       ...computedProps,
     },
     createElement(
-      props.tag,
+      tag,
       {
-        className: `dropdown-footer ${props.className}`,
+        className: `dropdown-footer ${className}`,
       },
-      props.children
+      children
     )
   );
 }
@@ -247,24 +256,19 @@ function DropdownFooter(props) {
 DropdownFooter.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
+  children: PropTypes.any,
 };
 
-DropdownFooter.defaultProps = {
-  tag: "div",
-  className: "",
-};
-
-// Dropdown divider
-function DropdownDivider(props) {
+function DropdownDivider({ tag = "hr", className = "", children }) {
   return createElement(
     "li",
     {},
     createElement(
-      props.tag,
+      tag,
       {
-        className: `dropdown-divider ${props.className}`,
+        className: `dropdown-divider ${className}`,
       },
-      props.children
+      children
     )
   );
 }
@@ -272,11 +276,7 @@ function DropdownDivider(props) {
 DropdownDivider.propTypes = {
   tag: PropTypes.string,
   className: PropTypes.string,
-};
-
-DropdownDivider.defaultProps = {
-  tag: "hr",
-  className: "",
+  children: PropTypes.any,
 };
 
 export {

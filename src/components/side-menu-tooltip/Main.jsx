@@ -16,7 +16,7 @@ const initTooltipEvent = (tippyRef) => {
   });
 };
 
-function Main(props) {
+function Main({ tag = "span", children, ...computedProps }) {
   const tippyRef = useRef();
 
   useEffect(() => {
@@ -24,27 +24,22 @@ function Main(props) {
     initTooltipEvent(tippyRef.current);
   }, [tippyRef.current]);
 
-  const { tag, ...computedProps } = props;
   return createElement(
     Tippy,
     {
       ...computedProps,
-      tag: props.tag,
+      tag,
       options: { placement: "left" },
       getRef: (el) => {
         tippyRef.current = el;
       },
     },
-    props.children
+    children
   );
 }
 
 Main.propTypes = {
   tag: PropTypes.string,
-};
-
-Main.defaultProps = {
-  tag: "span",
 };
 
 export default Main;

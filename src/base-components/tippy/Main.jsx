@@ -23,19 +23,24 @@ const init = (el, props) => {
   });
 };
 
-function Tippy(props) {
+function Tippy({
+  content = "",
+  tag = "span",
+  options = {},
+  getRef = () => {},
+  ...props
+}) {
   const tippyRef = createRef();
 
   useEffect(() => {
-    props.getRef(tippyRef.current);
-    init(tippyRef.current, props);
-  }, [props.content]);
+    getRef(tippyRef.current);
+    init(tippyRef.current, { content, options, ...props });
+  }, [content, options, props]);
 
-  const { content, tag, options, getRef, ...computedProps } = props;
   return createElement(
-    props.tag,
+    tag,
     {
-      ...computedProps,
+      ...props,
       ref: tippyRef,
     },
     props.children
@@ -47,13 +52,6 @@ Tippy.propTypes = {
   tag: PropTypes.string,
   options: PropTypes.object,
   getRef: PropTypes.func,
-};
-
-Tippy.defaultProps = {
-  content: "",
-  tag: "span",
-  options: {},
-  getRef: () => {},
 };
 
 export default Tippy;
