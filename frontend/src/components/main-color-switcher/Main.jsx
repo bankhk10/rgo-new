@@ -29,7 +29,7 @@ function Main(props) {
   return (
     <>
       {/* BEGIN: Main Color Switcher */}
-      <div className="shadow-md fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-10 mr-52">
+      {/* <div className="shadow-md fixed bottom-0 right-0 box border rounded-full h-12 px-5 flex items-center justify-center z-50 mb-10 mr-52">
         <div className="mr-4 hidden sm:block text-slate-600 dark:text-slate-200">
           Color Scheme
         </div>
@@ -88,7 +88,7 @@ function Main(props) {
             "border-white dark:border-darkmode-600": colorScheme != "theme-4",
           })}
         ></a>
-      </div>
+      </div> */}
       {/* END: Main Color Switcher */}
     </>
   );

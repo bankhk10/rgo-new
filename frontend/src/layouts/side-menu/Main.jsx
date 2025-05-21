@@ -44,7 +44,7 @@ function Main() {
               src={logoUrl}
             />
             <span className="hidden xl:block text-white text-lg ml-3">
-              Rubick
+              TEST
             </span>
           </Link>
           <div className="side-nav__devider my-6"></div>
